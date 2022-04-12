@@ -101,7 +101,7 @@ This folder includes:
 ------------------------------------------------
 ## Download Dataset
 
-The CholecT45 dataset has been officially released. If you wish to have access to this dataset, please kindly fill the request [form](https://forms.gle/jTdPJnZCmSe2Daw7A).
+The CholecT45 dataset has been officially released for public use on April 12, 2022. If you wish to have access to this dataset, please kindly fill the request [form](https://forms.gle/jTdPJnZCmSe2Daw7A).
 
 <br><br>
 
@@ -226,7 +226,7 @@ The paper provides extended experiments on the baseline methods using the offici
 ------------------------------------------------
 Additional Information
 ================================================
-The dataset has been used for MICCAI EndoVis challenge CholecTriplet2021.
+The dataset has been used for MICCAI EndoVis challenge [CholecTriplet2021](https://cholectriplet2021.grand-challenge.org).
 During the challenge, a lot of deep learning methods were presented on the dataset. 
 The challenge report is published at:
 - C.I. Nwoye, D. Alapatt, T. Yu, A. Vardazaryan, F. Xia, ... , C. Gonzalez, N. Padoy. CholecTriplet2021: a benchmark challenge for surgical action triplet recognition. arXiv PrePrint 2022. 
@@ -263,12 +263,59 @@ Any questions regarding the dataset can be sent to: camma.dataset@gmail.com
 ------------------------------------------------
 References
 ================================================
-* [1] A.P. Twinanda, S. Shehata, D. Mutter, J. Marescaux, M. de Mathelin, N. Padoy. EndoNet: A Deep Architecture for Recognition Tasks on Laparoscopic Videos. IEEE Trans. on Medical Imaging 2016.
+* **[1]** A.P. Twinanda, S. Shehata, D. Mutter, J. Marescaux, M. de Mathelin, N. Padoy. EndoNet: A Deep Architecture for Recognition Tasks on Laparoscopic Videos. IEEE Trans. on Medical Imaging 2016.
+  ```
+  @article{twinanda2016endonet,
+    title={Endonet: a deep architecture for recognition tasks on laparoscopic videos},
+    author={Twinanda, Andru P and Shehata, Sherif and Mutter, Didier and Marescaux, Jacques and De Mathelin, Michel and Padoy, Nicolas},
+    journal={IEEE transactions on medical imaging},
+    volume={36},
+    number={1},
+    pages={86--97},
+    year={2016}
+  }
+  ```
 
-* [2] C.I. Nwoye, T. Yu, C. Gonzalez, P. Mascagni, D. Mutter, J. Marescaux, N. Padoy. Recognition of instrument-tissue interactions in endoscopic videos via action triplets.International Conference on Medical Image Computing and Computer-Assisted Intervention (MICCAI) 2020.
+* **[2]** C.I. Nwoye, T. Yu, C. Gonzalez, P. Mascagni, D. Mutter, J. Marescaux, N. Padoy. Recognition of instrument-tissue interactions in endoscopic videos via action triplets.International Conference on Medical Image Computing and Computer-Assisted Intervention (MICCAI) 2020.
+  ```
+  @inproceedings{nwoye2020recognition,
+     title={Recognition of instrument-tissue interactions in endoscopic videos via action triplets},
+     author={Nwoye, Chinedu Innocent and Gonzalez, Cristians and Yu, Tong and Mascagni, Pietro and Mutter, Didier and Marescaux, Jacques and Padoy, Nicolas},
+     booktitle={International Conference on Medical Image Computing and Computer-Assisted Intervention (MICCAI)},
+     pages={364--374},
+     year={2020},
+     organization={Springer}
+  }
+  ```
 
-* [3] C.I. Nwoye, T. Yu, C. Gonzalez, B. Seeliger, P. Mascagni, D. Mutter, J. Marescaux, N. Padoy. Rendezvous: Attention Mechanisms for the Recognition of Surgical Action Triplets in Endoscopic Videos. Medical Image Analysis 2022.
+* **[3]** C.I. Nwoye, T. Yu, C. Gonzalez, B. Seeliger, P. Mascagni, D. Mutter, J. Marescaux, N. Padoy. Rendezvous: Attention Mechanisms for the Recognition of Surgical Action Triplets in Endoscopic Videos. Medical Image Analysis 2022.
+  ```
+  @article{nwoye2021rendezvous,
+    title={Rendezvous: Attention Mechanisms for the Recognition of Surgical Action Triplets in Endoscopic Videos},
+    author={Nwoye, Chinedu Innocent and Yu, Tong and Gonzalez, Cristians and Seeliger, Barbara and Mascagni, Pietro and Mutter, Didier and Marescaux, Jacques and Padoy, Nicolas},
+    journal={Medical Image Analysis},
+    volume={78},
+    pages={102433},
+    year={2022}
+  }
+  ```
 
-* [4] C.I. Nwoye, D. Alapatt, T. Yu, A. Vardazaryan, F. Xia, ... , D. Mutter, N. Padoy. CholecTriplet2021: A benchmark challenge for surgical action triplet recognition. arXiv PrePrint arXiv:2204.04746. 2022.
+* **[4]** C.I. Nwoye, D. Alapatt, T. Yu, A. Vardazaryan, F. Xia, ... , D. Mutter, N. Padoy. CholecTriplet2021: A benchmark challenge for surgical action triplet recognition. arXiv PrePrint arXiv:2204.04746. 2022.
+  ```
+  @article{nwoye2022cholectriplet2021,
+    title={CholecTriplet2021: a benchmark challenge for surgical action triplet recognition},
+    author={Nwoye, Chinedu Innocent and Alapatt, Deepak and Vardazaryan, Armine ... Gonzalez, Cristians and Padoy, Nicolas},
+    journal={arXiv preprint arXiv:2204.04746},
+    year={2022}
+  }
+  ```
 
-* [5] C.I. Nwoye, N. Padoy. Data Splits and Metrics for Benchmarking Methods on Surgical Action Triplet Datasets. arXiv PrePrint arXiv:2204.05235. 2022.
+* **[5]** C.I. Nwoye, N. Padoy. Data Splits and Metrics for Benchmarking Methods on Surgical Action Triplet Datasets. arXiv PrePrint arXiv:2204.05235. 2022.
+  ```
+  @article{nwoye2022data,
+    title={Data Splits and Metrics for Benchmarking Methods on Surgical Action Triplet Datasets},
+    author={Nwoye, Chinedu Innocent and Padoy, Nicolas},
+    journal={arXiv preprint arXiv:2204.05235},
+    year={2022}
+  }
+  ```
