@@ -112,7 +112,7 @@ DATASET DESCRIPTION
 The CholecT45 dataset contains 45 videos of cholecystectomy procedures collected in Strasbourg, France. It is a subset of Cholec80 [1] dataset.
 CholecT45 is an extension of CholecT40 [2] with additional videos and standardized annotations.
 The images are extracted at 1 fps from the videos and annotated with triplet information about surgical actions in the format of <instrument, verb, target>. 
-
+In total, there are 90489 frames and 127385 triplet instances in the dataset.
 To ensure anonymity, frames corresponding to out-of-body views are entirely blacked (RGB 0 0 0) out.
 
 
@@ -216,7 +216,7 @@ Dataset Splits and Baselines
 ================================================
 The official splits of the dataset for deep learning models is provided in the paper:
 - C.I. Nwoye, N. Padoy. Data Splits and Metrics for Benchmarking Methods on Surgical Action Triplet Datasets. arXiv PrePrint 2022.
-[![Read on ArXiv](https://img.shields.io/badge/arxiv-2109.03223-red)](https://arxiv.org/abs/2109.03223) 
+[![Read on ArXiv](https://img.shields.io/badge/arxiv-2204.05235-red)](https://arxiv.org/abs/2204.05235) 
 
 The paper provides extended experiments on the baseline methods using the official dataset splits.
 
@@ -230,7 +230,7 @@ The dataset has been used for MICCAI EndoVis challenge CholecTriplet2021.
 During the challenge, a lot of deep learning methods were presented on the dataset. 
 The challenge report is published at:
 - C.I. Nwoye, D. Alapatt, T. Yu, A. Vardazaryan, F. Xia, ... , C. Gonzalez, N. Padoy. CholecTriplet2021: a benchmark challenge for surgical action triplet recognition. arXiv PrePrint 2022. 
-[![Read on ArXiv](https://img.shields.io/badge/arxiv-2109.03223-red)](https://arxiv.org/abs/2109.03223) 
+[![Read on ArXiv](https://img.shields.io/badge/arxiv-2204.04746-red)](https://arxiv.org/abs/2204.04746) 
 
 
 
