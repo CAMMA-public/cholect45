@@ -261,20 +261,20 @@ We provide data loader for the following frameworks:
 
 ### Usage
 
-```
+``` python
   import pytorch_dataloader
   from torch.utils.data import DataLoader
   import ivtmetrics # install using: pip install ivtmetrics
 ```
 
 Initialize the metrics library:
-```    
+```python    
   metrics = ivtmetrics.Recognition(num_class=100)
 ```
 
 Loading the cholect45 cross-validation variant with test set as fold 1:
 
-```
+```python
   # initialize dataset: 
   dataset = pytorch_dataloader.CholecT50( 
               dataset_dir="/path/to/your/downloaded/cholect45/dataset", 
@@ -294,7 +294,8 @@ Currently supported list of augumentataions:
 ---
 
  Wrap in default pytorch data loader:
- ```
+ ```python
+  # train and val data loaders
   train_dataloader = DataLoader(train_dataset, batch_size=32, shuffle=True, prefetch_factor=3,)
   val_dataloader   = DataLoader(val_dataset, batch_size=32, shuffle=True)
   
@@ -308,7 +309,7 @@ Currently supported list of augumentataions:
 ``` 
 
 Using the dataset during experiment:
-```
+```python
   total_epochs = 10
   model = "Your model ()"
   for epoch in range(total_epochs):
@@ -330,12 +331,13 @@ Using the dataset during experiment:
           metrics.update(label_ivt, pred_ivt)
       metrics.video_end() # important for video-wise AP
 ```
-Obtain results:
-```
+Obtain results: 
+```python
   AP_i    = metrics.compute_video_AP("i")["AP"]
   mAP_it  = metrics.compute_video_AP("it")["mAP"]
   mAP_ivt = metrics.compute_video_AP("ivt")["mAP"]
 ```
+- see [ivtmetrics](https://github.com/CAMMA-public/ivtmetrics) github for more details on usage
 
 <br>
 
