@@ -8,12 +8,11 @@
 <!-- # CholecT45 
 ------------------------------------------------
 An endoscopic video dataset for surgical action triplet recognition.
+
+[![](https://img.shields.io/badge/UNDER-CONSTRUCTION-blue?style=for-the-badge)](https://hamzamohdzubair.github.io/redant/)
 -->
 
 ------------------------------------------------
-
-
-[![](https://img.shields.io/badge/UNDER-CONSTRUCTION-blue?style=for-the-badge)](https://hamzamohdzubair.github.io/redant/)
 
 
 This folder includes: 
