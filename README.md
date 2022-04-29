@@ -28,7 +28,6 @@ This folder includes:
   - a README file
 
 
-
 <details>
   <summary>  
   Expand this to visualize the dataset directory structure.
@@ -98,6 +97,14 @@ This folder includes:
 
 <br>
 
+
+# News and Updates:
+- [ **29/04/2022** ]: Added PyTorch dataloader for the dataset.
+
+<br>
+
+---
+
 ------------------------------------------------
 ## Download Dataset
 
@@ -115,6 +122,8 @@ The images are extracted at 1 fps from the videos and annotated with triplet inf
 In total, there are 90489 frames and 127385 triplet instances in the dataset.
 To ensure anonymity, frames corresponding to out-of-body views are entirely blacked (RGB 0 0 0) out.
 
+<br>
+
 
 ------------------------------------------------
 Triplet Annotations
@@ -128,6 +137,8 @@ This last 100 columns sequentially correspond to the triplets IDs (0..99) and na
 
 For simplicity, we also provide annotations for the various components of the triplets: instrument, verb and target.
 
+<br>
+
 ------------------------------------------------
 Instrument Annotations
 ================================================
@@ -138,6 +149,7 @@ The first column indicates the frame index of the annotated image in the video. 
 The other 6 columns are the binary labels for the instrument (0=not present; 1=present).
 This last 6 columns sequentially correspond to the instrument IDs (0..5) and names as contained in the mapping file (dict/instrument.txt)
 
+<br>
 
 
 ------------------------------------------------
@@ -150,6 +162,7 @@ The first column indicates the frame index of the annotated image in the video. 
 The other 10 columns are the binary labels for the verb (0=not present; 1=present).
 This last 10 columns sequentially correspond to the verb IDs (0..9) and names as contained in the mapping file (dict/verb.txt)
 
+<br>
 
 
 
@@ -163,6 +176,7 @@ The first column indicates the frame index of the annotated image in the video. 
 The other 15 columns are the binary labels for the target (0=not present; 1=present).
 This last 15 columns sequentially correspond to the target IDs (0..14) and names as contained in the mapping file (dict/target.txt)
 
+<br>
 
 
 
@@ -187,6 +201,7 @@ This means that triplet iD 1 can be mapped to <0, 2, 0> which is {grasper, disse
 
 
 
+<br>
 
 
 
@@ -209,6 +224,7 @@ The cholecT45 dataset is publicly released under the Creative Commons license [C
 
 By downloading and using this dataset, you agree on these terms and conditions.
 
+<br>
 
 
 ------------------------------------------------
@@ -221,6 +237,7 @@ The official splits of the dataset for deep learning models is provided in the p
 The paper provides extended experiments on the baseline methods using the official dataset splits.
 
 
+<br>
 
 
 ------------------------------------------------
@@ -232,6 +249,96 @@ The challenge report is published at:
 - C.I. Nwoye, D. Alapatt, T. Yu, A. Vardazaryan, F. Xia, ... , C. Gonzalez, N. Padoy. CholecTriplet2021: a benchmark challenge for surgical action triplet recognition. arXiv PrePrint 2022. 
 [![Read on ArXiv](https://img.shields.io/badge/arxiv-2204.04746-red)](https://arxiv.org/abs/2204.04746) 
 
+<br>
+
+
+
+------------------------------------------------
+Data Loader
+================================================
+We provide data loader for the following frameworks:
+- PyTorch :  [`pytorch_dataloader.py`](pytorch_dataloader.py)
+- ...
+
+### Usage
+
+```
+  import pytorch_dataloader
+  from torch.utils.data import DataLoader
+  import ivtmetrics # install using: pip install ivtmetrics
+```
+
+Initialize the metrics library:
+```    
+  metrics = ivtmetrics.Recognition(num_class=100)
+```
+
+Loading the cholect45 cross-validation variant with test set as fold 1:
+
+```
+  # initialize dataset: 
+  dataset = pytorch_dataloader.CholecT50( 
+              dataset_dir="/path/to/your/downloaded/cholect45/dataset", 
+              dataset_version="cholect45-cross-val",
+              test_fold=1,
+              augmentation_list=['original', 'vflip', 'hflip', 'contrast', 'rot90'],
+              )
+
+
+  # build dataset
+  train_dataset, val_dataset, test_dataset = dataset.build()
+```
+
+Currently supported list of augumentataions:
+ - vflip, hflip, contrast, rot90, sharpness, autocontrast
+
+---
+
+ Wrap in default pytorch data loader:
+ ```
+  train_dataloader = DataLoader(train_dataset, batch_size=32, shuffle=True, prefetch_factor=3,)
+  val_dataloader   = DataLoader(val_dataset, batch_size=32, shuffle=True)
+  
+
+  # test data set is built per video, so load differently
+  test_dataloaders = []
+  for video_dataset in test_dataset:
+      test_dataloader = DataLoader(video_dataset, batch_size=32, shuffle=False)
+      test_dataloaders.append(test_dataloader)
+
+``` 
+
+Using the dataset during experiment:
+```
+  total_epochs = 10
+  model = "Your model ()"
+  for epoch in range(total_epochs):
+      # training
+      for batch, (img, (label_i, label_v, label_t, lavel_ivt)) in enumerate(train_dataloader):
+          pred_ivt = model(img)
+          loss(label_ivt, pred_ivt)
+          
+
+      # validate
+      for batch, (img, (label_i, label_v, label_t, lavel_ivt)) in enumerate(val_dataloader):
+          pred_ivt = model(img)
+
+
+  # testing: test per video
+  for test_dataloader in test_dataloaders:
+      for batch, (img, (label_i, label_v, label_t, lavel_ivt)) in enumerate(test_dataloader):
+          pred_ivt = model(img)
+          metrics.update(label_ivt, pred_ivt)
+      metrics.video_end() # important for video-wise AP
+```
+Obtain results:
+```
+  AP_i    = metrics.compute_video_AP("i")["AP"]
+  mAP_it  = metrics.compute_video_AP("it")["mAP"]
+  mAP_ivt = metrics.compute_video_AP("ivt")["mAP"]
+```
+
+<br>
 
 
 ------------------------------------------------
