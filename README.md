@@ -99,6 +99,7 @@ This folder includes:
 
 # News and Updates:
 - [ **29/04/2022** ]: Added PyTorch dataloader for the dataset.
+- [ **02/05/2022** ]: Added TensorFlow v2 dataloader for the dataset.
 
 <br>
 
@@ -256,44 +257,63 @@ The challenge report is published at:
 Data Loader
 ================================================
 We provide data loader for the following frameworks:
-- PyTorch :  [`pytorch_dataloader.py`](pytorch_dataloader.py)
+- PyTorch :  [`dataloader_pth.py`](dataloader_pth.py)
+- TensorFlow v2 :  [`dataloader_tf2.py`](dataloader_tf2.py)
 - ...
+
+... *if you use any part of this code, please cite the paper associated with the CHolecT50 dataset.*
+
 
 ### Usage
 
 ``` python
-  import pytorch_dataloader
-  from torch.utils.data import DataLoader
   import ivtmetrics # install using: pip install ivtmetrics
+
+  # for PyTorch
+  import pth_dataloader as dataloader
+  from torch.utils.data import DataLoader
+
+  # for TensorFlow v2
+  import dataloader_tf2 as dataloader
 ```
 
-Initialize the metrics library:
+<br>
+
+**Initialize the metrics library**
 ```python    
   metrics = ivtmetrics.Recognition(num_class=100)
 ```
 
-Loading the cholect45 cross-validation variant with test set as fold 1:
+<br>
+
+**Build dataset pipeline**
+
+Loading the cholect45 cross-validation variant with test set as fold 1 as follows:
 
 ```python
   # initialize dataset: 
-  dataset = pytorch_dataloader.CholecT50( 
-              dataset_dir="/path/to/your/downloaded/cholect45/dataset", 
-              dataset_version="cholect45-cross-val",
-              test_fold=1,
-              augmentation_list=['original', 'vflip', 'hflip', 'contrast', 'rot90'],
-              )
+  dataset = dataloader.CholecT50( 
+            dataset_dir="/path/to/your/downloaded/cholect45/dataset", 
+            dataset_version="cholect45-cross-val",
+            test_fold=1,
+            augmentation_list=['original', 'vflip', 'hflip', 'contrast', 'rot90'],
+            )
 
 
   # build dataset
   train_dataset, val_dataset, test_dataset = dataset.build()
 ```
 
-Currently supported list of augumentataions:
- - vflip, hflip, contrast, rot90, sharpness, autocontrast
+List of currently supported data augumentations:
+ - use `dataset.list_augmentations()` to see the full list.
 
----
+<br>
 
- Wrap in default pytorch data loader:
+**Wrap as default data loader**
+
+ - *PyTorch :*
+
+
  ```python
   # train and val data loaders
   train_dataloader = DataLoader(train_dataset, batch_size=32, shuffle=True, prefetch_factor=3,)
@@ -305,41 +325,66 @@ Currently supported list of augumentataions:
   for video_dataset in test_dataset:
       test_dataloader = DataLoader(video_dataset, batch_size=32, shuffle=False)
       test_dataloaders.append(test_dataloader)
-
 ``` 
 
-Using the dataset during experiment:
+
+ - *TensorFlow v2 :*
+
+```python
+  # train and val data loaders
+  train_dataloader = train_dataset.shuffle(20).batch(32).prefetch(5) # see tf.data.Dataset for more options
+  val_dataloader   = val_dataloader.batch(32)
+  
+
+  # test data set is built per video, so load differently
+  test_dataloaders = []
+  for video_dataset in test_dataset:
+      test_dataloader = video_dataset.batch(32).prefetch(5)
+      test_dataloaders.append(test_dataloader)
+``` 
+
+<br>
+
+**Reading the dataset during experiment**:
 ```python
   total_epochs = 10
-  model = "Your model ()"
+  model = YourFantasticModel(...)
   for epoch in range(total_epochs):
       # training
-      for batch, (img, (label_i, label_v, label_t, lavel_ivt)) in enumerate(train_dataloader):
+      for batch, (img, (label_i, label_v, label_t, label_ivt)) in enumerate(train_dataloader):
           pred_ivt = model(img)
           loss(label_ivt, pred_ivt)
           
 
       # validate
-      for batch, (img, (label_i, label_v, label_t, lavel_ivt)) in enumerate(val_dataloader):
+      for batch, (img, (label_i, label_v, label_t, label_ivt)) in enumerate(val_dataloader):
           pred_ivt = model(img)
 
 
   # testing: test per video
   for test_dataloader in test_dataloaders:
-      for batch, (img, (label_i, label_v, label_t, lavel_ivt)) in enumerate(test_dataloader):
+      for batch, (img, (label_i, label_v, label_t, label_ivt)) in enumerate(test_dataloader):
           pred_ivt = model(img)
           metrics.update(label_ivt, pred_ivt)
       metrics.video_end() # important for video-wise AP
 ```
-Obtain results: 
+<br>
+
+**Obtain results**: 
 ```python
   AP_i    = metrics.compute_video_AP("i")["AP"]
   mAP_it  = metrics.compute_video_AP("it")["mAP"]
   mAP_ivt = metrics.compute_video_AP("ivt")["mAP"]
 ```
-- see [ivtmetrics](https://github.com/CAMMA-public/ivtmetrics) github for more details on usage
+<br> 
+
+- For TensorFlow, we recommend the use of [TFRecord](https://www.tensorflow.org/tutorials/load_data/tfrecord) for high-speed data loading.
+- See [ivtmetrics](https://github.com/CAMMA-public/ivtmetrics) github for more details on metrics usage.
 
 <br>
+
+
+
 
 
 ------------------------------------------------

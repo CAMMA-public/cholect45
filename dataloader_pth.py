@@ -16,7 +16,7 @@ Created on Thu Oct 21 15:38:36 2021
 Copyright 2021 The Research Group CAMMA Authors All Rights Reserved.
 (c) Research Group CAMMA, University of Strasbourg, France
 @ Laboratory: CAMMA - ICube
-@ Author: Nwoye Chinedu Innocent
+@ Author: Chinedu Innocent Nwoye
 @ Website: http://camma.u-strasbg.fr
 #==============================================================================
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -60,11 +60,11 @@ class CholecT50():
         """
         self.dataset_dir = dataset_dir
         self.list_dataset_version = {
-            "cholect45-cross-val": "45cv",
-            "cholect50-cross-val": "50cv",
-            "cholect50-challenge": "50ch",
-            "cholect45": "45cv",
-            "cholect50": "50",
+            "cholect45-cross-val": "45cv", # official data splits (cross-val)
+            "cholect50-cross-val": "50cv", # official data splits (cross-val)
+            "cholect50-challenge": "50ch", # data splits as used in CholecTriplet challenge
+            "cholect45": "45cv",           # pointer to cholect45-cross-val
+            "cholect50": "50",             # original data splits as used in rendezvous paper
         }
         dsv          = self.list_dataset_version[dataset_version]
         video_split  = self.split_selector(case=dsv)
@@ -84,8 +84,8 @@ class CholecT50():
             'hflip': transforms.RandomHorizontalFlip(0.4),
             'contrast': transforms.ColorJitter(brightness=0.1, contrast=0.2, saturation=0, hue=0),
             'rot90': transforms.RandomRotation(90,expand=True),
-            'sharpness': transforms.RandomAdjustSharpness(sharpness_factor=1.6, p=0.5),
-            'autocontrast': transforms.RandomAutocontrast(p=0.5),
+            'brightness': transforms.RandomAdjustSharpness(sharpness_factor=1.6, p=0.5),
+            'contrast': transforms.RandomAutocontrast(p=0.5),
         }
         self.augmentation_list = []
         for aug in augmentation_list:
@@ -95,11 +95,11 @@ class CholecT50():
         self.build_val_dataset(trainform)
         self.build_test_dataset(testform)
     
+
+    def list_augmentations(self):
+        print(self.augmentations.keys())
+
     def split_selector(self, case='50'):
-        # 50:   cholecT50, data splits as used in rendezvous paper
-        # 50ch: cholecT50, data splits as used in CholecTriplet challenge
-        # 45cv: cholecT45, official data splits (cross-val)
-        # 50cv: cholecT50, official data splits (cross-val)
         switcher = {
             '50': {
                 'train': [1, 15, 26, 40, 52, 65, 79, 2, 18, 27, 43, 56, 66, 92, 4, 22, 31, 47, 57, 68, 96, 5, 23, 35, 48, 60, 70, 103, 13, 25, 36, 49, 62, 75, 110],
@@ -205,3 +205,7 @@ class T50(Dataset):
         if self.target_transform:
             triplet_label = self.target_transform(triplet_label)
         return image, (tool_label, verb_label, target_label, triplet_label)
+
+
+if __name__ == "__main__":
+    print("Refers to https://github.com/CAMMA-public/cholect45 for the usage guide.")
