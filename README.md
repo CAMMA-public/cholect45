@@ -261,7 +261,7 @@ We provide data loader for the following frameworks:
 - TensorFlow v2 :  [`dataloader_tf2.py`](dataloader_tf2.py)
 - ...
 
-... *if you use any part of this code, please cite the paper associated with the CHolecT50 dataset.*
+... *if you use any part of this code, please cite the paper associated with the CholecT50 dataset.*
 
 
 ### Usage
@@ -270,7 +270,7 @@ We provide data loader for the following frameworks:
   import ivtmetrics # install using: pip install ivtmetrics
 
   # for PyTorch
-  import pth_dataloader as dataloader
+  import dataloader_pth as dataloader
   from torch.utils.data import DataLoader
 
   # for TensorFlow v2
@@ -293,7 +293,7 @@ Loading the cholect45 cross-validation variant with test set as fold 1 as follow
 ```python
   # initialize dataset: 
   dataset = dataloader.CholecT50( 
-            dataset_dir="/path/to/your/downloaded/cholect45/dataset", 
+            dataset_dir="/path/to/your/downloaded/dataset/cholect45/", 
             dataset_version="cholect45-cross-val",
             test_fold=1,
             augmentation_list=['original', 'vflip', 'hflip', 'contrast', 'rot90'],
