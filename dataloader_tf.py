@@ -42,7 +42,7 @@ import tensorflow as tf
 class CholecT50():
     def __init__(self, 
                 dataset_dir, 
-                dataset_version="cholect45-cross-val",
+                dataset_variant="cholect45-crossval",
                 test_fold=1,
                 augmentation_list=['original', 'vflip', 'hflip', 'contrast', 'rot90'],):
         """ Args
@@ -57,18 +57,18 @@ class CholecT50():
                 tuple ((image), (tool_label, verb_label, target_label, triplet_label))
         """
         self.dataset_dir = dataset_dir
-        self.list_dataset_version = {
-            "cholect45-cross-val": "45cv", # official data splits (cross-val)
-            "cholect50-cross-val": "50cv", # official data splits (cross-val)
-            "cholect50-challenge": "50ch", # data splits as used in CholecTriplet challenge
-            "cholect45": "45cv",           # pointer to cholect45-cross-val
-            "cholect50": "50",             # original data splits as used in rendezvous paper
+        self.list_dataset_variant = {
+            "cholect45-crossval": "for CholecT45 dataset variant with the official cross-validation splits.",
+            "cholect50-crossval": "for CholecT50 dataset variant with the official cross-validation splits",
+            "cholect50-challenge": "for CholecT50 dataset variant as used in CholecTriplet challenge",
+            "cholect50": "for the CholecT50 dataset with original splits used in rendezvous paper",
+            "cholect45": "a pointer to cholect45-crossval",
         }
-        dsv          = self.list_dataset_version[dataset_version]
-        video_split  = self.split_selector(case=dsv)
-        train_videos = sum([v for k,v in video_split.items() if k!=test_fold], []) if 'cv' in dsv else video_split['train']
-        test_videos  = sum([v for k,v in video_split.items() if k==test_fold], []) if 'cv' in dsv else video_split['test']
-        if 'cv' in dsv:
+        assert dataset_variant in self.list_dataset_variant.keys(), print(dataset_variant, "is not a valid dataset variant")
+        video_split  = self.split_selector(case=dataset_variant)
+        train_videos = sum([v for k,v in video_split.items() if k!=test_fold], []) if 'crossval' in dataset_variant else video_split['train']
+        test_videos  = sum([v for k,v in video_split.items() if k==test_fold], []) if 'crossval' in dataset_variant else video_split['test']
+        if 'crossval' in dataset_variant:
             train_videos = train_videos[:-5]
             val_videos   = train_videos[-5:]
         else:
@@ -81,26 +81,26 @@ class CholecT50():
         self.build_val_dataset()
         self.build_test_dataset()
 
-    def split_selector(self, case='50'):
+    def split_selector(self, case='cholect50'):
         switcher = {
-            '50': {
+            'cholect50': {
                 'train': [1, 15, 26, 40, 52, 65, 79, 2, 18, 27, 43, 56, 66, 92, 4, 22, 31, 47, 57, 68, 96, 5, 23, 35, 48, 60, 70, 103, 13, 25, 36, 49, 62, 75, 110],
                 'val'  : [8, 12, 29, 50, 78],
                 'test' : [6, 51, 10, 73, 14, 74, 32, 80, 42, 111]
             },
-            '50ch': {
+            'cholect50-challenge': {
                 'train': [1, 15, 26, 40, 52, 79, 2, 27, 43, 56, 66, 4, 22, 31, 47, 57, 68, 23, 35, 48, 60, 70, 13, 25, 49, 62, 75, 8, 12, 29, 50, 78, 6, 51, 10, 73, 14, 32, 80, 42],
                 'val':   [5, 18, 36, 65, 74],
                 'test':  [92, 96, 103, 110, 111]
             },
-            '45cv': {
+            'cholect45-crossval': {
                 1: [79,  2, 51,  6, 25, 14, 66, 23, 50,],
                 2: [80, 32,  5, 15, 40, 47, 26, 48, 70,],
                 3: [31, 57, 36, 18, 52, 68, 10,  8, 73,],
                 4: [42, 29, 60, 27, 65, 75, 22, 49, 12,],
                 5: [78, 43, 62, 35, 74,  1, 56,  4, 13,],
             },
-            '50cv': {
+            'cholect50-crossval': {
                 1: [79,  2, 51,  6, 25, 14, 66, 23, 50, 111],
                 2: [80, 32,  5, 15, 40, 47, 26, 48, 70,  96],
                 3: [31, 57, 36, 18, 52, 68, 10,  8, 73, 103],
@@ -130,6 +130,9 @@ class CholecT50():
 
     def list_augmentations(self):
         print(self.switcher_img.keys())
+
+    def list_dataset_variants(self):
+        print(self.list_dataset_variant)
 
     def generator(self, records):
         for record in records:
