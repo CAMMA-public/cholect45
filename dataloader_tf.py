@@ -22,9 +22,7 @@ Copyright 2021 The Research Group CAMMA Authors All Rights Reserved.
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
-
      http://www.apache.org/licenses/LICENSE-2.0
-
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,6 +34,7 @@ Copyright 2021 The Research Group CAMMA Authors All Rights Reserved.
 import os
 import random
 import numpy as np
+from PIL import Image
 import tensorflow as tf
 
 
@@ -44,7 +43,8 @@ class CholecT50():
                 dataset_dir, 
                 dataset_variant="cholect45-crossval",
                 test_fold=1,
-                augmentation_list=['original', 'vflip', 'hflip', 'contrast', 'rot90'],):
+                augmentation_list=['original', 'vflip', 'hflip', 'contrast', 'rot90'],
+                num_parallel_calls=8):
         """ Args
                 dataset_dir : common path to the dataset (excluding videos, output)
                 list_video  : list video IDs, e.g:  ['VID01', 'VID02']
@@ -76,7 +76,8 @@ class CholecT50():
         self.train_records = ['VID{}'.format(str(v).zfill(2)) for v in train_videos]
         self.val_records   = ['VID{}'.format(str(v).zfill(2)) for v in val_videos]
         self.test_records  = ['VID{}'.format(str(v).zfill(2)) for v in test_videos]
-        self.augmentation_list = augmentation_list
+        self.augmentation_list  = augmentation_list
+        self.num_parallel_calls = self.get_num_parallel(num_parallel_calls)
         self.build_train_dataset()
         self.build_val_dataset()
         self.build_test_dataset()
@@ -109,24 +110,50 @@ class CholecT50():
             },
         }
         return switcher.get(case)
-
+            
     def augmentation(self, img, label):
-        rate    = tf.random.uniform(shape=[2], minval=0.5, maxval=2.0, dtype=tf.float32, name='resize_rate') #seed=121,
-        r_shape = tf.cast(tf.cast(tf.shape(img)[1:3],tf.float32) * rate, tf.int32)
         self.switcher_img = {                
                 'original'   :  img,
-                'scaling'    :  tf.image.resize_with_crop_or_pad(img, r_shape[0], r_shape[1]),
+                'scaling'    :  self.scale(img),
                 'vflip'      :  tf.image.random_flip_up_down(img),
                 'hflip'      :  tf.image.random_flip_left_right(img),
-                'transpose'  :  tf.image.transpose(img),
+                'transpose'  :  self.transpose(img),
                 'rot90'      :  tf.image.rot90(img, k = 1), 
                 'brightness' :  tf.image.random_brightness(img, 0.5),
-                'contrast'   :  tf.image.random_contrast(img, 0.3, 0.5)
+                'contrast'   :  tf.image.random_contrast(img, 0.3, 0.5),
             }
         for case in self.augmentation_list:
             img = self.switcher_img.get(case, img)
-        img = tf.image.resize(images=img, size=[256, 448])
+        img = self.resize(img)
         return img, label
+
+    def scale(self, img):
+        try:
+            rate    = tf.random.uniform(shape=[2], minval=0.5, maxval=2.0, dtype=tf.float32, name='resize_rate')
+            r_shape = tf.cast(tf.cast(tf.shape(img)[1:3],tf.float32) * rate, tf.int32)
+            return tf.image.resize_with_crop_or_pad(img, r_shape[0], r_shape[1])
+        except:
+            rate     = tf.random_uniform(shape=[2], minval=0.5, maxval=2.0, dtype=tf.float32, name='resize_rate') 
+            r_shape = tf.cast(tf.cast(tf.shape(img)[1:3],tf.float32) * rate, tf.int32)
+            return tf.image.resize_image_with_crop_or_pad(img, r_shape[0], r_shape[1])
+
+    def transpose(self, img):
+        try:
+            return tf.image.transpose(img)
+        except:
+            return tf.image.transpose_image(img)
+
+    def resize(self, img):
+        try:
+            return tf.image.resize(images=img, size=[256, 448])
+        except:
+            return tf.image.resize_images(images=img, size=[256, 448])
+
+    def get_num_parallel(self, n):
+        try:
+            return tf.data.experimental.AUTOTUNE
+        except:
+            return n    
 
     def list_augmentations(self):
         print(self.switcher_img.keys())
@@ -143,29 +170,28 @@ class CholecT50():
             target_file     = np.loadtxt(os.path.join(self.dataset_dir, "target/{}.txt".format(record.decode("utf-8") )), dtype=np.int, delimiter=',',)
             for i,v,t,ivt in zip(tool_file, verb_file, target_file, triplet_file):
                 assert i[0]==v[0]==t[0]==ivt[0]
-                image_path = os.path.join(video_path, "{}.png".format(str(ivt[0]).zfill(6)))
-                image = tf.keras.preprocessing.image.load_img(image_path)
-                image = tf.image.resize(images=image, size=[256, 448])
-                # image = (2.0/255.0) * tf.cast(image, tf.float32) - 1.0
+                image_path  = os.path.join(video_path, "{}.png".format(str(ivt[0]).zfill(6)))
+                image       = Image.open(image_path)
+                image       = image.resize(size=(448,256))
                 yield image, (i[1:], v[1:], t[1:], ivt[1:])               
 
     def build_train_dataset(self):
         self.train_dataset = tf.data.Dataset.from_generator(
                 self.generator,
                 args = [self.train_records],
-                output_types = (tf.float32, (tf.int32, tf.int32, tf.int32, tf.int32) ),
+                output_types = (tf.float32, (tf.int32, tf.int32, tf.int32, tf.int32)),
                 output_shapes = ([256, 448,3], ([6], [10], [15], [100]))
             )
-        self.train_dataset = self.train_dataset.map(self.augmentation, num_parallel_calls=tf.data.experimental.AUTOTUNE)           
+        self.train_dataset = self.train_dataset.map(self.augmentation, num_parallel_calls=self.num_parallel_calls)           
 
     def build_val_dataset(self):
         self.val_dataset = tf.data.Dataset.from_generator(
                 self.generator,
                 args = [self.val_records],
-                output_types = (tf.float32, (tf.int32, tf.int32, tf.int32, tf.int32,)),
+                output_types = (tf.float32, (tf.int32, tf.int32, tf.int32, tf.int32)),
                 output_shapes = ([256, 448,3], ([6], [10], [15], [100]))
             )
-        self.val_dataset = self.val_dataset.map(self.augmentation, num_parallel_calls=tf.data.experimental.AUTOTUNE)   
+        self.val_dataset = self.val_dataset.map(self.augmentation, num_parallel_calls=self.num_parallel_calls)   
 
     def build_test_dataset(self):
         self.test_dataset = []
@@ -173,7 +199,7 @@ class CholecT50():
             test_dataset = tf.data.Dataset.from_generator(
                 self.generator,
                 args = [[video]],
-                output_types = (tf.float32, (tf.int32, tf.int32, tf.int32, tf.int32,)),
+                output_types = (tf.float32, (tf.int32, tf.int32, tf.int32, tf.int32)),
                 output_shapes = ([256, 448,3], ([6], [10], [15], [100]))
             )
             self.test_dataset.append(test_dataset)

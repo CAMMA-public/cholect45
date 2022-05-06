@@ -349,17 +349,20 @@ for video_dataset in test_dataset:
 - *TensorFlow v1 :*
 
 ```python
-# construct an iterator
-iterator   = tf.data.Iterator.from_structure(output_types=train_dataset.output_types, output_shapes=train_dataset.output_shapes) 
+# construct an iterator and train data loaders
+train_dataset = train_dataset.shuffle(20).batch(32).prefetch(5) # see tf.data.Dataset for more options
+iterator      = tf.data.Iterator.from_structure(output_types=train_dataset.output_types, output_shapes=train_dataset.output_shapes) 
+init_train    = iterator.make_initializer(train_dataset) 
 
-# train and val data loaders
-init_train = iterator.make_initializer(train_dataset) 
-init_val   = iterator.make_initializer(val_dataset) 
+# using the same iterator, construct val data loaders
+val_dataset = val_dataset.batch(32)
+init_val    = iterator.make_initializer(val_dataset) 
 
-# test data set is built per video, so load differently
+# test data set is built per video, so load differently with the same iterator
 init_tests = []
 for video_dataset in test_dataset:
-  init = iterator.make_initializer(video_dataset) 
+  video_dataset = video_dataset.batch(32)
+  init          = iterator.make_initializer(video_dataset) 
   init_tests.append(init)
 
 # outputs from iterator
