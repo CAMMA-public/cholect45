@@ -46,7 +46,8 @@ class CholecT50():
                 dataset_dir, 
                 dataset_variant="cholect45-crossval",
                 test_fold=1,
-                augmentation_list=['original', 'vflip', 'hflip', 'contrast', 'rot90']):
+                augmentation_list=['original', 'vflip', 'hflip', 'contrast', 'rot90']
+                normalize=True):
         """ Args
                 dataset_dir : common path to the dataset (excluding videos, output)
                 list_video  : list video IDs, e.g:  ['VID01', 'VID02']
@@ -58,6 +59,7 @@ class CholecT50():
             Return
                 tuple ((image), (tool_label, verb_label, target_label, triplet_label))
         """
+        self.normalize   = normalize
         self.dataset_dir = dataset_dir
         self.list_dataset_variant = {
             "cholect45-crossval": "for CholecT45 dataset variant with the official cross-validation splits.",
@@ -65,6 +67,7 @@ class CholecT50():
             "cholect50-challenge": "for CholecT50 dataset variant as used in CholecTriplet challenge",
             "cholect50": "for the CholecT50 dataset with original splits used in rendezvous paper",
             "cholect45": "a pointer to cholect45-crossval",
+            "cholect50-subset": "specially created for EDU4SDS summer school"
         }
         assert dataset_variant in self.list_dataset_variant.keys(), print(dataset_variant, "is not a valid dataset variant")
         video_split  = self.split_selector(case=dataset_variant)
@@ -127,6 +130,11 @@ class CholecT50():
                 4: [42, 29, 60, 27, 65, 75, 22, 49, 12, 110],
                 5: [78, 43, 62, 35, 74,  1, 56,  4, 13,  92],
             },
+            'cholect50-subset': {
+                'train': [68, 70, 75],
+                'val'  : [80],
+                'test' : [50]
+            },
         }
         return switcher.get(case)
 
@@ -135,8 +143,11 @@ class CholecT50():
 
     def transform(self):
         normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-        op_test   = [transforms.Resize((256, 448)), transforms.ToTensor(), normalize,]
-        op_train  = [transforms.Resize((256, 448))] + self.augmentation_list + [transforms.Resize((256, 448)), transforms.ToTensor(), normalize,]
+        op_test   = [transforms.Resize((256, 448)), transforms.ToTensor(), ]
+        op_train  = [transforms.Resize((256, 448))] + self.augmentation_list + [transforms.Resize((256, 448)), transforms.ToTensor()]
+        if self.normalize:
+            op_test.append(normalize)
+            op_train.append(normalize)
         testform  = transforms.Compose(op_test)
         trainform = transforms.Compose(op_train)
         return trainform, testform

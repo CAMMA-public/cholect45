@@ -240,18 +240,6 @@ The paper provides extended experiments on the baseline methods using the offici
 <br>
 
 
-------------------------------------------------
-Additional Information
-================================================
-The dataset has been used for MICCAI EndoVis challenge [CholecTriplet2021](https://cholectriplet2021.grand-challenge.org).
-During the challenge, a lot of deep learning methods were presented on the dataset. 
-The challenge report is published at:
-- C.I. Nwoye, D. Alapatt, T. Yu, A. Vardazaryan, F. Xia, ... , C. Gonzalez, N. Padoy. CholecTriplet2021: a benchmark challenge for surgical action triplet recognition. arXiv PrePrint 2022. 
-[![Read on ArXiv](https://img.shields.io/badge/arxiv-2204.04746-red)](https://arxiv.org/abs/2204.04746) 
-
-<br>
-
-
 
 ------------------------------------------------
 Data Loader
@@ -459,6 +447,17 @@ mAP_ivt = metrics.compute_video_AP("ivt")["mAP"]
 <br>
 
 
+
+------------------------------------------------
+Additional Information
+================================================
+The dataset has been used for MICCAI EndoVis challenge [CholecTriplet2021](https://cholectriplet2021.grand-challenge.org).
+During the challenge, a lot of deep learning methods were presented on the dataset. 
+The challenge report is published at:
+- C.I. Nwoye, D. Alapatt, T. Yu, A. Vardazaryan, F. Xia, ... , C. Gonzalez, N. Padoy. CholecTriplet2021: a benchmark challenge for surgical action triplet recognition. arXiv PrePrint 2022. 
+[![Read on ArXiv](https://img.shields.io/badge/arxiv-2204.04746-red)](https://arxiv.org/abs/2204.04746) 
+
+<br>
 
 
 
