@@ -46,7 +46,7 @@ class CholecT50():
                 dataset_dir, 
                 dataset_variant="cholect45-crossval",
                 test_fold=1,
-                augmentation_list=['original', 'vflip', 'hflip', 'contrast', 'rot90']
+                augmentation_list=['original', 'vflip', 'hflip', 'contrast', 'rot90'],
                 normalize=True):
         """ Args
                 dataset_dir : common path to the dataset (excluding videos, output)
@@ -129,11 +129,6 @@ class CholecT50():
                 3: [31, 57, 36, 18, 52, 68, 10,  8, 73, 103],
                 4: [42, 29, 60, 27, 65, 75, 22, 49, 12, 110],
                 5: [78, 43, 62, 35, 74,  1, 56,  4, 13,  92],
-            },
-            'cholect50-subset': {
-                'train': [68, 70, 75],
-                'val'  : [80],
-                'test' : [50]
             },
         }
         return switcher.get(case)

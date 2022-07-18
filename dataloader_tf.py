@@ -44,6 +44,7 @@ class CholecT50():
                 dataset_variant="cholect45-crossval",
                 test_fold=1,
                 augmentation_list=['original', 'vflip', 'hflip', 'contrast', 'rot90'],
+                normalize=True,
                 num_parallel_calls=8):
         """ Args
                 dataset_dir : common path to the dataset (excluding videos, output)
@@ -56,6 +57,7 @@ class CholecT50():
             Return
                 tuple ((image), (tool_label, verb_label, target_label, triplet_label))
         """
+        self.normalize   = normalize
         self.dataset_dir = dataset_dir
         self.list_dataset_variant = {
             "cholect45-crossval": "for CholecT45 dataset variant with the official cross-validation splits.",
