@@ -236,7 +236,8 @@ The official splits of the dataset for deep learning models is provided in the p
 
 The paper provides extended experiments on the baseline methods using the official dataset splits.
 
-
+![](files/cv.png)
+**Fig. 1**: Cross-validation experiment schedule for CholecT50. For CholecT45, remove the last video in each fold.
 <br>
 
 

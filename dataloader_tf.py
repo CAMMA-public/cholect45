@@ -71,8 +71,8 @@ class CholecT50():
         train_videos = sum([v for k,v in video_split.items() if k!=test_fold], []) if 'crossval' in dataset_variant else video_split['train']
         test_videos  = sum([v for k,v in video_split.items() if k==test_fold], []) if 'crossval' in dataset_variant else video_split['test']
         if 'crossval' in dataset_variant:
-            train_videos = train_videos[:-5]
             val_videos   = train_videos[-5:]
+            train_videos = train_videos[:-5]
         else:
             val_videos   = video_split['val']
         self.train_records = ['VID{}'.format(str(v).zfill(2)) for v in train_videos]
