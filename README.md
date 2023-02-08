@@ -98,6 +98,7 @@ This folder includes:
 
 
 # News and Updates:
+- [ **29/02/2023** ]: CholecT50 dataset is now released. This is more complete and the superset of CholecT45. Find [here](https://github.com/CAMMA-public/cholect50/blob/master/README.md).
 - [ **29/04/2022** ]: Added PyTorch dataloader for the dataset.
 - [ **02/05/2022** ]: Added TensorFlow v2 dataloader for the dataset.
 
