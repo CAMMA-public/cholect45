@@ -100,10 +100,13 @@ This folder includes:
 The superset and a more complete version of the dataset, CholecT50, is now available [here](https://github.com/CAMMA-public/cholect50/blob/master/README.md).
 
 # News and Updates:
+- [ **17/09/2025** ]: Check out our [CAMMA Dataset Overlaps](https://github.com/CAMMA-public/camma_dataset_overlaps) repository for an analysis of video overlaps across Cholec80, CholecT50, and Endoscapes to ensure fair dataset splits.
 - [ **29/04/2022** ]: Added PyTorch dataloader for the dataset.
 - [ **02/05/2022** ]: Added TensorFlow v2 dataloader for the dataset.
 
 <br>
+
+
 
 ---
 
